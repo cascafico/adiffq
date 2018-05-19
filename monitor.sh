@@ -13,7 +13,10 @@ wget -O adiff$OGGI.xml "http://overpass-api.de/api/interpreter?data=%5Bout%3Axml
 echo "changesets involved:"
 
 cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "node id=" | grep visible | awk -F '\"' '{print $10}' | sort -u > changeset.lst
+
+#check if visible works, maybe field 10>8 needed
 cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "way id=" | grep visible | awk -F '\"' '{print $10}' | sort -u >> changeset.lst
+
 cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "relation id=" | awk -F '\"' '{print $8}' | sort -u >> changeset.lst
 
 sort -u changeset.lst -o changeset.lst
