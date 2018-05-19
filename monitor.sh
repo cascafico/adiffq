@@ -20,7 +20,10 @@ sort -u changeset.lst -o changeset.lst
 
 #https://overpass-api.de/achavi/?changeset=59069589
 #https://osmcha.mapbox.com/changesets//59069589
-#<a href="url">link text</a>
+
+# directly to changeset form:
+# https://osmcha.mapbox.com/changesets/59069589?filters=%7B%22ids%22%3A%5B%7B%22label%22%3A%2259073166%22%2C%22value%22%3A%2259073166%22%7D%5D%7D
+
 
 rm index.html
 
