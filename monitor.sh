@@ -25,7 +25,8 @@ wget -O adiff$OGGI.xml "$QUERY"
 
 echo "changesets involved:"
 
-cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "node id=" | grep visible | awk -F '\"' '{print $10}' | sort -u > changeset.lst
+#cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "node id=" | grep visible | awk -F '\"' '{print $10}' | sort -u > changeset.lst
+cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "node id=" | awk -F '\"' '{print $12}' | sort -u > changeset.lst
 
 # check if more reliable with changeset field separator
 #cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "way id=" | grep visible | awk -F '\"' '{print $10}' | sort -u >> changeset.lst
