@@ -10,7 +10,7 @@ RUN=`date`
 # query in bbox has more chences to be successful
 QUERY="http://overpass-api.de/api/interpreter?data=[out:xml][timeout:120][adiff:\"$T0\",\"$T1\"];(relation[\"operator\"=\"Club Alpino Italiano\"](45.4697,11.7663,47.0158,14.1201);relation[\"operator\"=\"CAI\"](45.4697,11.7663,47.0158,14.1201););(._;>;);out meta geom;"
 
-QUERYGEO="[out:xml][timeout:45][adiff:\"$T0\",\"$T1\"];area(3600179296)->.searchArea;(relation["operator"="Club Alpino Italiano"](area.searchArea);relation["operator"="CAI"](area.searchArea););(._;>;);out meta geom;"
+QUERYGEO="[out:xml][timeout:45][adiff:\"$T0\",\"$T1\"];area(3600179296)->.searchArea;(relation[\"operator\"=\"Club Alpino Italiano\"](area.searchArea);relation[\"operator\"=\"CAI\"](area.searchArea););(._;>;);out meta geom;"
 
 cd /tmp
 
