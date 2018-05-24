@@ -41,8 +41,8 @@ sort -u changeset.lst -o changeset.lst
 #<a href="url">link text</a>
 
 rm index.html
-
-echo "<style>table, th, td { border: 1px solid black; border-collapse: collapse; }</style>" > index.html
+echo "Changeset(s) created in the last 24h, involving operator=CAI or operator=Club Alpino Italiano<p>" > index.html
+echo "<style>table, th, td { border: 1px solid black; border-collapse: collapse; }</style>" >> index.html
 echo "<table><tr><th>OSMcha</th><th>Achavi</th></tr>" >> index.html
 
 while read -r line
@@ -52,6 +52,6 @@ do
     echo "<tr><td><a href=\"https://osmcha.mapbox.com/changesets/$name?filters=%7B%22ids%22%3A%5B%7B%22label%22%3A%22$name%22%2C%22value%22%3A%22$name%22%7D%5D%7D\"> $line </a></td><td><a href=\"https://overpass-api.de/achavi/?changeset=$name\"> $line </a></td></tr>" >> index.html
 done < "changeset.lst"
 
-echo "</table>Script run on $RUN" >> index.html
+echo "</table><p>This page has been generated on $RUN" >> index.html
 
 mv index.html /var/www/osm/dailyCAI.html
