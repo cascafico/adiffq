@@ -35,7 +35,7 @@ sort -u changeset.lst -o changeset.lst
 CHAN=`cat changeset.lst | wc -l`
 
 rm index.html
-echo "Changeset(s) created in the last 24h, involving operator=CAI or operator=Club Alpino Italiano in $REGIONE<p>" > index.html
+echo "Changeset(s) created in the last 24h<br> Query: operator=CAI or operator=Club Alpino Italiano in $REGIONE<p>" > index.html
 echo "<style>table, th, td { border: 1px solid black; border-collapse: collapse; }</style>" >> index.html
 echo "<table><tr><th>OSMcha</th><th>Achavi</th></tr>" >> index.html
 
