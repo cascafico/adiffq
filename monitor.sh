@@ -21,21 +21,14 @@ wget -O adiff$OGGI.xml "$QUERY"
 
 # TBD: insert control if changefile exists and has nodes and loop until got a valid one
 
-#cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "node id=" | grep visible | awk -F '\"' '{print $10}' | sort -u > changeset.lst
-cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "node id=" | awk -F '\"' '{print $12}' | sort -u > changeset.lst
-
-# check if more reliable with changeset field separator
-#cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "way id=" | grep visible | awk -F '\"' '{print $10}' | sort -u >> changeset.lst
-cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "way id=" | awk -F '\"' '{print $8}' | sort -u >> changeset.lst
-
-cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep "relation id=" | awk -F '\"' '{print $8}' | sort -u >> changeset.lst
+cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep changeset | awk ' { print substr($0,index($0, "changeset")+11,8) }' > changeset.lst
 
 echo "sorting and compacting changeset list"
 sort -u changeset.lst -o changeset.lst
 CHAN=`cat changeset.lst | wc -l`
 
 rm index.html
-echo "Changeset(s) created in the last 24h<br> Query: operator=CAI or operator=Club Alpino Italiano in $REGIONE<p>" > index.html
+echo "<h3>Changeset(s) created in the last 24h </h3><br> Query: operator=CAI or operator=Club Alpino Italiano <br> Area: $REGIONE<p>" > index.html
 echo "<style>table, th, td { border: 1px solid black; border-collapse: collapse; }</style>" >> index.html
 echo "<table><tr><th>OSMcha</th><th>Achavi</th></tr>" >> index.html
 
@@ -45,8 +38,11 @@ do
     echo "<tr><td><a href=\"https://osmcha.mapbox.com/changesets/$name?filters=%7B%22ids%22%3A%5B%7B%22label%22%3A%22$name%22%2C%22value%22%3A%22$name%22%7D%5D%7D\"> $line </a></td><td><a href=\"https://overpass-api.de/achavi/?changeset=$name\"> $line </a></td></tr>" >> index.html
 done < "changeset.lst"
 
-if [ $CHAN == 0 ]; then 
+if [ $CHAN == 0 ]
+then 
    echo "<tr><td colspan = \"2\">No changeset between $T0 and $T1</td></tr>" >> index.html
+else
+   echo "<tr><td colspan = \"2\">$CHAN changeset(s)  between $T0 and $T1</td></tr>" >> index.html
 fi
 
 echo "</table><p>This page has been generated on $RUN" >> index.html
