@@ -1,25 +1,36 @@
 #!/bin/bash
+# first argument admin boundary area name
+
+if [ $# -eq 0 ]
+   then
+     echo "area name needed"
+     echo "...exiting"
+     exit
+fi
 
 T0=`date -d "yesterday 00:00" '+%Y-%m-%d'`T00:00:00Z
 T1=`date +"%Y-%m-%d"`T00:00:00Z
 IERI=`date -d "yesterday 00:00" '+%Y-%m-%d'`
 OGGI=`date +"%Y-%m-%d"`
-REGIONE="Friuli Venezia Giulia"
 
 RUN=`date`
 
-# query in bbox has more chences to be successful
-QUERY="http://overpass-api.de/api/interpreter?data=[out:xml][timeout:120][adiff:\"$T0\",\"$T1\"];(relation[\"operator\"=\"Club Alpino Italiano\"](45.4697,11.7663,47.0158,14.1201);relation[\"operator\"=\"CAI\"](45.4697,11.7663,47.0158,14.1201););(._;>;);out meta geom;"
+AREACODE=`curl -s "http://overpass-api.de/api/interpreter?data=area%5B%22boundary%22%3D%22administrative%22%5D%5B%22name%22%3D%22$1%22%5D%3Bout%20ids%3B%0A" | grep 3600 | awk -F "\"" '{print $2}'`
 
-QUERYGEO="[out:xml][timeout:45][adiff:\"$T0\",\"$T1\"];area(3600179296)->.searchArea;(relation[\"operator\"=\"Club Alpino Italiano\"](area.searchArea);relation[\"operator\"=\"CAI\"](area.searchArea););(._;>;);out meta geom;"
+if [ -z $AREACODE  ]
+   then
+     echo "area name not found (please case sensitive)"
+     echo "...exiting"
+     exit
+fi
 
-cd /tmp
+# here you can select relation tags
+QUERY="http://overpass-api.de/api/interpreter?data=[out:xml][timeout:45][adiff:\"$T0\",\"$T1\"];area($AREACODE)->.searchArea;relation[\"operator\"~\"Club Alpino Italiano|CAI\"](area.searchArea);(._;>;);out meta geom;"
+
 
 echo "extracting CAIFVG yesterday differences ..."
 
 wget -O adiff$OGGI.xml "$QUERY"
-
-# TBD: insert control if changefile exists and has nodes and loop until got a valid one
 
 cat adiff$OGGI.xml | grep "$IERI\|$OGGI" | grep changeset | awk ' { print substr($0,index($0, "changeset")+11,8) }' > changeset.lst
 
@@ -27,8 +38,7 @@ echo "sorting and compacting changeset list"
 sort -u changeset.lst -o changeset.lst
 CHAN=`cat changeset.lst | wc -l`
 
-rm index.html
-echo "<h3>Changeset(s) created in the last 24h </h3><br> Query: operator=CAI or operator=Club Alpino Italiano <br> Area: $REGIONE<p>" > index.html
+echo "<h3>Changeset(s) created in the last 24h </h3><br> Query: operator=CAI or operator=Club Alpino Italiano <br> Area: $1<p>" > index.html
 echo "<style>table, th, td { border: 1px solid black; border-collapse: collapse; }</style>" >> index.html
 echo "<table><tr><th>OSMcha</th><th>Achavi</th></tr>" >> index.html
 
@@ -47,4 +57,4 @@ fi
 
 echo "</table><p>This page has been generated on $RUN" >> index.html
 
-mv index.html /var/www/osm/dailyCAI.html
+#mv index.html /var/www/osm/dailyCAI.html
