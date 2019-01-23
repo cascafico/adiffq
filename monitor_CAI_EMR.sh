@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# script to monitor specific OSM elements modified during the day
-# query:
-# http://overpass-turbo.eu/s/Fr0
+# script to monitor specific OSM elements modified during last 24h
+# query: http://overpass-turbo.eu/s/Fr0
 
 # if changesets!=0, telegram message to CANALE will be sent with links to achavi
+# requires telegram-cli installed
 
 T0=`date -d "yesterday 00:00" '+%Y-%m-%d'`T00:00:00Z
 T1=`date +"%Y-%m-%d"`T00:00:00Z
@@ -12,9 +12,9 @@ T1=`date +"%Y-%m-%d"`T00:00:00Z
 IERI=`date -d "yesterday 00:00" '+%Y-%m-%d'`
 OGGI=`date +"%Y-%m-%d"`
 
-REGIONE="Emilia Romagna"
-CANALE=CAIER
-MESSAGGIO="Ci sono modifiche alla rete sentieri tra $IERI e $OGGI"
+REGIONE="EMR"
+CANALE=CAI$REGIONE
+MESSAGGIO="Ci sono modifiche alla rete sentieri $REGIONE tra $IERI e $OGGI"
 
 RUN=`date`
 
@@ -24,34 +24,34 @@ RUN=`date`
 QUERYGEO="http://overpass-api.de/api/interpreter?data=%5Bout%3Axml%5D%5Btimeout%3A300%5D%5Badiff%3A%22$T0%3A00%3A00Z%22%2C%22$T1%3A00%3A00Z%22%5D%3Barea%283600042611%29%2D%3E%2EsearchArea%3B%28relation%5B%22operator%22%3D%22Club%20Alpino%20Italiano%22%5D%28area%2EsearchArea%29%3Brelation%5B%22operator%22%3D%22CAI%22%5D%28area%2EsearchArea%29%3B%29%3B%28%2E%5F%3B%3E%3B%29%3Bout%20meta%20geom%3B%0A"
 
 cd /tmp
-rm CAIER*
+rm $REGIONE*
 
-echo "extracting CAIER yesterday differences ..."
-wget -O CAIERadiff$OGGI.xml "$QUERYGEO"
+echo "extracting yesterday differences ..."
+wget -O $REGIONEadiff$OGGI.xml "$QUERYGEO"
 
-echo "parsing changesets involved"
-cat CAIERadiff$OGGI.xml | grep "$IERI\|$OGGI" | grep changeset | awk ' { print substr($0,index($0, "changeset")+11,8) }' > CAIERchangeset.lst
+echo "parsing involved changeset(s)"
+cat $REGIONEadiff$OGGI.xml | grep "$IERI\|$OGGI" | grep changeset | awk ' { print substr($0,index($0, "changeset")+11,8) }' > $REGIONEchangeset.lst
 
 echo "sorting and compacting changeset list"
-sort -u CAIERchangeset.lst -o CAIERchangeset.lst
+sort -u $REGIONEchangeset.lst -o $REGIONEchangeset.lst
 
 echo "counting changesets involved"
-CHAN=`cat CAIERchangeset.lst | wc -l`
+CHAN=`cat $REGIONEchangeset.lst | wc -l`
 
 echo "writing talegram message header"
-echo "Ci sono modifiche alla rete sentieri $REGIONE tra $T0 e $T1" >  CAIERtelegram_msg.txt
+echo "Ci sono modifiche alla rete sentieri $REGIONE tra $T0 e $T1" >  $REGIONEtelegram_msg.txt
 
 echo "building changeset list in telegram message"
 while read -r line
 do
     name="$line"
-    echo "https://overpass-api.de/achavi/?changeset=$name" >> CAIERtelegram_msg.txt
-done < "CAIERchangeset.lst"
+    echo "https://overpass-api.de/achavi/?changeset=$name" >> $REGIONEtelegram_msg.txt
+done < "$REGIONEchangeset.lst"
 
 if [ $CHAN == 0 ]
 then 
-   echo "No changes in $REGIONE between $T0 and $T1"
-else
-   (sleep 6; echo "send_text $CANALE CAIERtelegram_msg.txt"; echo "safe_quit") | /home/pi/apps/tg/bin/telegram-cli -W
+   (sleep 6; echo "msg $CANALE nessuna modifica tra $T0 e $T1"; echo "safe_quit") | /home/pi/apps/tg/bin/telegram-cli -W
+   else
+   (sleep 6; echo "send_text $CANALE $REGIONEtelegram_msg.txt"; echo "safe_quit") | /home/pi/apps/tg/bin/telegram-cli -W
 fi
 
