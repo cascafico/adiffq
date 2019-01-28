@@ -6,10 +6,11 @@
 # REQUIRES 
 #  telegram-cli installed 
 #  telegram channel $CANALE created
-#  areacode, see: http://overpass-turbo.eu/s/FsM
+#  areacode: refer to areacodes file or customize you area running this query
+#  http://overpass-turbo.eu/s/FwF
 
 
-# adding the following row to crontab will check daily at 00:05 AM:
+# optionally, adding the following row to crontab will check daily at 00:05 AM:
 # 5 0 * * * <path>/monitor_CAI.sh >> /dev/null 2>&1
 
 
@@ -17,7 +18,7 @@
 REGIONE="TTA"
 CANALE=CAI$REGIONE
 #AREACODE=360000000 + <see areacodes file>
-AREACODE=36045757
+AREACODE=360045757
 TELEGRAMCLIPATH=/home/pi/apps/tg/bin/
 ######## end customization
 

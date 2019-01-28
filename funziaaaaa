@@ -1,0 +1,2 @@
+curl -G 'http://overpass-api.de/api/interpreter' --data-urlencode 'data=[out:xml][timeout:300][adiff:"2019-01-19T00:00:00Z","2019-01-24T00:00:00Z"];area(3600045757)->.searchArea;(relation["operator"="Club Alpino Italiano"](area.searchArea);relation["operator"="CAI"](area.searchArea););(._;>;);out meta geom;'
+
