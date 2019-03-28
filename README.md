@@ -1,9 +1,3 @@
-# monitor:sh 
-Note: outdated by monitor_tg.sh
-- generates an Openstreetmap changeset list involving daily changes based on overpass-turbo query
-- builds html page with changeset list
-- sends alert to telegram channel
-
 # monitor_tg.sh
 The script aims to monitor daily changes in an Openstreetmap area and report them at the end of the day via telegram channel, hence it should be run after midnight. You can choose area by areacode id and customize which OSM elements are to be monitored. The example script performs a recursive query, so querying a relation implies monitor all its members (ways and nodes).
 To set running time, refer to crontab.
@@ -28,3 +22,9 @@ The example query will extract changesets where relations with operator="CAI" or
 ## crontab 
 to run periodically 5' after midnight, at prompt run "crontab -e" and add the following line:
 5 0 * * * /your-path-to-script/monitor_tg.sh.sh >/dev/null 2>&1 
+# monitor:sh 
+Note: outdated by monitor_tg.sh
+- generates an Openstreetmap changeset list involving daily changes based on overpass-turbo query
+- builds html page with changeset list
+- sends alert to telegram channel
+
